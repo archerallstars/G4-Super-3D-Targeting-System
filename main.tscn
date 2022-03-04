@@ -1,0 +1,361 @@
+[gd_scene load_steps=16 format=3 uid="uid://c0lcyjhlt3fi1"]
+
+[ext_resource type="Script" uid="uid://cc6iftirj8vhv" path="res://player.vs" id="1_xi2n5"]
+[ext_resource type="Script" uid="uid://bsfen4togecf6" path="res://Look.vs" id="3_c5tdu"]
+[ext_resource type="Script" uid="uid://ccj1og5mp7kh2" path="res://Camroot.vs" id="4_2a5n5"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2244c"]
+radius = 1.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_76xex"]
+top_radius = 1.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_cjkro"]
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_ys5pd"]
+albedo_color = Color(1, 0, 0.054902, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_d2k0g"]
+material = SubResource( "ORMMaterial3D_ys5pd" )
+top_radius = 0.01
+height = 0.9
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_hdrcx"]
+albedo_color = Color(1, 0, 0.054902, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_r8hw1"]
+material = SubResource( "ORMMaterial3D_hdrcx" )
+top_radius = 0.1
+bottom_radius = 0.1
+height = 1.5
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4p8yw"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_mpqm2"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_x4ymt"]
+sky_top_color = Color(0.145098, 0.623529, 0.960784, 1)
+sky_energy = 6.0
+ground_bottom_color = Color(1, 0.619608, 0.0392157, 1)
+ground_horizon_color = Color(0, 0.545098, 0.92549, 1)
+ground_energy = 1.5
+
+[sub_resource type="Sky" id="Sky_eevku"]
+sky_material = SubResource( "ProceduralSkyMaterial_x4ymt" )
+
+[sub_resource type="Environment" id="Environment_3y4hp"]
+background_mode = 2
+sky = SubResource( "Sky_eevku" )
+
+[node name="Main" type="Node3D"]
+
+[node name="player" type="CharacterBody3D" parent="."]
+script = ExtResource( "1_xi2n5" )
+__meta__ = {
+"_edit_group_": true
+}
+player_camroot_v_node = NodePath("Camroot/h/v")
+camera_status = false
+player_camroot_h_node = NodePath("Camroot/h")
+camera_status_node = NodePath("../Control/cam")
+player_pointer_node = NodePath("arrow")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="player"]
+shape = SubResource( "CylinderShape3D_2244c" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="player/CollisionShape3D"]
+mesh = SubResource( "CylinderMesh_76xex" )
+
+[node name="DetectionArea" type="Area3D" parent="player"]
+transform = Transform3D(11, 0, 0, 0, 11, 0, 0, 0, 11, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="player/DetectionArea"]
+shape = SubResource( "SphereShape3D_cjkro" )
+
+[node name="arrow" type="Node3D" parent="player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12145, 0)
+script = ExtResource( "3_c5tdu" )
+pick_mode = 2
+allow_targeting_mode_change = true
+auto_retargeting = true
+action_status_node = NodePath("../../Control/Label3")
+mode_display_node = NodePath("../../Control/arrow")
+target_group_node = NodePath("../../targets")
+default_target_node = NodePath("../../targets/0")
+targeting_mode = 2
+targeting_area_node = NodePath("../DetectionArea")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="player/arrow"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource( "CylinderMesh_d2k0g" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="player/arrow/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.1083, 0)
+mesh = SubResource( "CylinderMesh_r8hw1" )
+
+[node name="Camroot" type="Node3D" parent="player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.906258, 0)
+script = ExtResource( "4_2a5n5" )
+camera_node = NodePath("h/v/Camera3D")
+camrot_v_node = NodePath("h/v")
+camrot_h_node = NodePath("h")
+
+[node name="h" type="Node3D" parent="player/Camroot"]
+
+[node name="v" type="Node3D" parent="player/Camroot/h"]
+
+[node name="Camera3D" type="Camera3D" parent="player/Camroot/h/v"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 2.80002, -10.7899)
+fov = 50.0
+
+[node name="targets" type="Node3D" parent="."]
+
+[node name="0" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.58121, 5.07716)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/0"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/0/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="1" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.6374, 0, 0)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/1"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/1/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="2" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2943, 0, 0)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/2"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/2/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="3" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.25281, 0, -7.73204)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/3"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/3/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="4" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.07615, 0, -8.83697)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/4"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/4/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="5" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.23811, 9.53588, -1.65867)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/5"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/5/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="6" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.21068, 6.14514, -4.20389)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/6"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/6/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="7" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.46575, 4.05784, 0)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/7"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/7/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="8" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.29666, 7.83915, 5.65538)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/8"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/8/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="9" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.58066, 7.56908, 6.36841)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/9"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/9/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="10" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.58113, -6.08907, -7.96897)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/10"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/10/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="11" type="StaticBody3D" parent="targets" groups=["target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.77583, -6.3217, -8.54607)
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="targets/11"]
+shape = SubResource( "BoxShape3D_4p8yw" )
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="targets/11/CollisionShape3D"]
+mesh = SubResource( "BoxMesh_mpqm2" )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( "Environment_3y4hp" )
+
+[node name="Control" type="Control" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="Control"]
+visible = false
+offset_left = 45.0
+offset_top = 33.0
+offset_right = 999.0
+offset_bottom = 283.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 18
+text = "WASD to move, Space to move up, Ctrl to move down.
+For Arrow target Press 1/2/3/4/5 to switch/toggle:
+
+1. Direct: Like look_at() but uses positive z-axis
+2. Smooth - Follow: Non linear, Follows the target, no lock on
+3. Smooth - Lock: Non linear, locks on at end, not good for mecha feel
+4. Constant - Static: Linear, simpler code, for static target/player, good for static mechanical stuff
+5. Constant - Moving: Linear, more complex code, works with moving target/player, good for moving mecha"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="Control"]
+offset_left = 1001.0
+offset_top = 640.0
+offset_right = 1336.0
+offset_bottom = 736.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+text = "For Camera target toggle
+Press F"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label3" type="Label" parent="Control"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = 263.0
+offset_right = 1325.0
+offset_bottom = 484.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 42
+horizontal_alignment = 1
+vertical_alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label4" type="Label" parent="Control"]
+offset_left = 40.0
+offset_top = 33.0
+offset_right = 375.0
+offset_bottom = 244.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="arrow" type="Label" parent="Control"]
+offset_left = 45.0
+offset_top = 640.0
+offset_right = 380.0
+offset_bottom = 736.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="cam" type="Label" parent="Control"]
+offset_left = 1001.0
+offset_top = 554.0
+offset_right = 1336.0
+offset_bottom = 650.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 26
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
+[connection signal="body_entered" from="player/DetectionArea" to="player/arrow" method="_on_detection_area_body_entered"]
+[connection signal="body_exited" from="player/DetectionArea" to="player/arrow" method="_on_detection_area_body_exited"]
